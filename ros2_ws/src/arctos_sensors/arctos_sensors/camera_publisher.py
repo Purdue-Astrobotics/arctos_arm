@@ -22,7 +22,7 @@ class CameraPublisher(Node):
         # 0 keeps the camera's default
         width = self.declare_parameter('width', 0).value
         height = self.declare_parameter('height', 0).value
-        rate = self.declare_parameter('rate', 30.0).value
+        rate = self.declare_parameter('rate', 240).value
 
         self.capture = cv2.VideoCapture(device, cv2.CAP_V4L2)
         if not self.capture.isOpened():

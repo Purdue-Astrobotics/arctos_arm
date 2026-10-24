@@ -21,7 +21,11 @@ RUN apt-get update && apt-get install -y \
     ros-jazzy-gz-ros2-control \
     sudo \
     usbutils \
+    python3-pip \
     && rm -rf /var/lib/apt/lists/*
+
+# YOLO for arctos_cv. numpy stays below 2, cv_bridge is built against 1.26
+RUN pip3 install --break-system-packages --no-cache-dir ultralytics "numpy<2"
 
 # Run as a user matching the host's UID/GID so files created in the mounted
 # workspace are owned by the host user (set UID/GID in .env, see .env.example)
