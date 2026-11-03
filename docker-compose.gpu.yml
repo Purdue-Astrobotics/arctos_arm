@@ -23,6 +23,9 @@ services:
       ROS_DISTRO: jazzy
       DISPLAY: ${DISPLAY:-:0}
       QT_X11_NO_MITSHM: "1"
+      # GigE camera port, see .env.example
+      CAMERA_IFACE: ${CAMERA_IFACE:-}
+      CAMERA_HOST_IP: ${CAMERA_HOST_IP:-169.254.1.1/16}
       XAUTHORITY: ${XAUTH:-/tmp/.docker.xauth}
     devices:
       - /dev/bus/usb:/dev/bus/usb

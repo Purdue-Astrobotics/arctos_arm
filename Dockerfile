@@ -8,6 +8,7 @@ WORKDIR /workspace
 RUN apt-get update && apt-get install -y \
     terminator \
     gir1.2-aravis-0.8 \
+    iproute2 \
     python3-gi \
     python3-opencv \
     ros-jazzy-cv-bridge \
@@ -39,6 +40,12 @@ RUN if id ubuntu &>/dev/null; then userdel -r ubuntu; fi \
     && echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USERNAME} \
     && chmod 0440 /etc/sudoers.d/${USERNAME} \
     && echo "source /opt/ros/jazzy/setup.bash" >> /home/${USERNAME}/.bashrc
+
+# Sets up the camera's network port at start, see entrypoint.sh. Called as
+# camera-net-setup it only does the setup
+COPY entrypoint.sh /entrypoint.sh
+RUN ln -s /entrypoint.sh /usr/local/bin/camera-net-setup
+ENTRYPOINT ["/entrypoint.sh"]
 
 USER ${USERNAME}
 
