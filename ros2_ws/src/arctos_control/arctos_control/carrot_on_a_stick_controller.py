@@ -40,6 +40,19 @@ def distance(a, b):
     return math.dist((a.x, a.y, a.z), (b.x, b.y, b.z))
 
 
+def same_goal(a, b, position_tolerance, orientation_tolerance):
+    """Compare poses, accounting for equivalent quaternion signs."""
+    if distance(a.position, b.position) > position_tolerance:
+        return False
+    qa = (a.orientation.x, a.orientation.y, a.orientation.z, a.orientation.w)
+    qb = (b.orientation.x, b.orientation.y, b.orientation.z, b.orientation.w)
+    norm = math.sqrt(sum(x * x for x in qa) * sum(x * x for x in qb))
+    if norm == 0:
+        return False
+    dot = min(1.0, abs(sum(x * y for x, y in zip(qa, qb))) / norm)
+    return 2 * math.acos(dot) <= orientation_tolerance
+
+
 class CarrotOnAStickController(Node):
 
     def __init__(self):
@@ -69,6 +82,7 @@ class CarrotOnAStickController(Node):
         self.servo_ready = False
         self.busy = False  # waiting on a servo service or on a goal to be accepted
         self.goal_handle = None
+        self.completed_goal = None
         self.plan_goal = None  # pose the current plan is heading to
         self.cancelling = False
         self.next_plan_time = Time(clock_type=self.get_clock().clock_type)
@@ -120,6 +134,10 @@ class CarrotOnAStickController(Node):
                 self.cancel_plan('close enough to servo')
             elif distance(self.plan_goal.position, self.target.position) > self.replan_distance:
                 self.cancel_plan('target moved')
+        elif (self.servo_distance <= 0 and self.completed_goal is not None
+              and same_goal(self.completed_goal, self.target,
+                            self.replan_distance, self.orientation_tolerance)):
+            return
         elif to_target < self.servo_distance:
             self.enter_servo()
         elif self.get_clock().now() >= self.next_plan_time:
@@ -243,6 +261,8 @@ class CarrotOnAStickController(Node):
         if failed and not self.cancelling:
             self.get_logger().warn(
                 f'Plan and execute failed (MoveIt error code {result.result.error_code.val})')
+        if not failed and not self.cancelling:
+            self.completed_goal = self.plan_goal
         self.plan_finished(retry_later=failed and not self.cancelling)
 
     def plan_finished(self, retry_later):

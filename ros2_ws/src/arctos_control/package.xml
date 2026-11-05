@@ -9,6 +9,8 @@
   <maintainer email="rodr1674@purdue.edu">Alejandro Rodriguez del Bosque</maintainer>
   <license>BSD-3-Clause</license>
 
+  <exec_depend>arctos_cv</exec_depend>
+  <exec_depend>arctos_sensors</exec_depend>
   <exec_depend>action_msgs</exec_depend>
   <exec_depend>arctos_moveit_config</exec_depend>
   <exec_depend>arctos_simulation</exec_depend>

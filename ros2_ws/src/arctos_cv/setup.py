@@ -24,6 +24,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
+            'april_tag_pose_bridge = arctos_cv.april_tag_pose_bridge:main',
             'april_tag_detector = arctos_cv.april_tag_detector:main',
         ],
     },

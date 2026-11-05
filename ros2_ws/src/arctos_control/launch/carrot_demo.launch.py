@@ -1,9 +1,11 @@
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterValue
 from launch_ros.substitutions import FindPackageShare
 from moveit_configs_utils import MoveItConfigsBuilder
 import yaml
@@ -70,11 +72,17 @@ def generate_launch_description():
     controller = Node(
         package='arctos_control',
         executable='carrot_on_a_stick_controller',
-        parameters=[use_sim_time],
+        parameters=[use_sim_time, {
+            'servo_distance': ParameterValue(LaunchConfiguration('servo_distance'), value_type=float),
+        }],
+        remappings=[('desired_pose', LaunchConfiguration('target_topic'))],
         output='screen',
     )
 
+    source_arg = DeclareLaunchArgument('figure_eight', default_value='true')
+
     figure_eight = Node(
+        condition=IfCondition(LaunchConfiguration('figure_eight')),
         package='arctos_control',
         executable='figure_eight_publisher',
         parameters=[
@@ -90,6 +98,9 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
+        DeclareLaunchArgument('servo_distance', default_value='0.25'),
+        DeclareLaunchArgument('target_topic', default_value='desired_pose'),
+        source_arg,
         gz_args_arg,
         rviz_arg,
         simulation,
