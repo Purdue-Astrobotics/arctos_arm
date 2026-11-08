@@ -141,3 +141,24 @@ specific to this arm:
 ```bash
 colcon build --packages-up-to arctos_control
 ```
+
+
+## Original carrot demo without the figure-eight source
+
+```bash
+ros2 launch arctos_control manual_carrot_demo.launch.py
+```
+
+This wrapper includes carrot_demo.launch.py with only figure_eight:=false.
+It reuses the original RViz configuration, MoveIt controls, Servo settings,
+and controller target topic. No replacement marker, labels, or viewer are added.
+The equivalent original-launch command is:
+
+```bash
+ros2 launch arctos_control carrot_demo.launch.py figure_eight:=false
+```
+
+The original MoveIt interactive marker remains a manual planning goal; disabling
+the figure-eight source does not make that marker publish to /desired_pose.
+Use the original MoveIt Plan & Execute controls for manual motion, or supply a
+PoseStamped publisher on /desired_pose for the carrot controller.
