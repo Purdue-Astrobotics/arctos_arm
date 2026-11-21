@@ -100,6 +100,7 @@ class CarrotOnAStickController(Node):
         self.create_subscription(PoseStamped, 'desired_pose', self.on_target, 10)
         self.create_timer(1.0 / control_rate, self.update)
 
+    # Get target pose from subscribed node:
     def on_target(self, msg):
         if msg.header.frame_id not in ('', self.planning_frame):
             try:
@@ -143,6 +144,7 @@ class CarrotOnAStickController(Node):
         elif self.get_clock().now() >= self.next_plan_time:
             self.start_plan()
 
+    # Get end effector possition
     def ee_position(self):
         try:
             tf = self.tf_buffer.lookup_transform(self.planning_frame, self.ee_link, Time())

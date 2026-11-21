@@ -46,4 +46,5 @@ def generate_launch_description():
         arguments=['-d', PathJoinSubstitution([
             FindPackageShare('arctos_control'), 'config', 'camera_demo.rviz'])],
         parameters=[{'use_sim_time': True}], output='screen')
+    
     return LaunchDescription(args + [GroupAction(actions=[demo], scoped=True), camera, bridge, viewer])

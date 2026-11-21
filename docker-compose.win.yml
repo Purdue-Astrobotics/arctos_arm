@@ -1,6 +1,8 @@
 # Windows 11 + Docker Desktop (WSL2 backend) variant of docker-compose.yml
 # Usage: docker compose -f docker-compose.win.yml up -d --build
 #
+# To run: do above, then 'docker exec -it arctos-ros bash'
+#
 # GUI apps (RViz, Gazebo, terminator) are displayed through WSLg, which ships
 # with Windows 11, so no X server (VcXsrv/Xming) or xauth setup is needed.
 services:
@@ -28,8 +30,14 @@ services:
       - ./ros2_ws:/workspace/ros2_ws
       # WSLg X11 socket and runtime dir (Wayland, PulseAudio), as exposed
       # inside the Docker Desktop VM
-      - /run/desktop/mnt/host/wslg/.X11-unix:/tmp/.X11-unix
-      - /run/desktop/mnt/host/wslg:/mnt/wslg
+      
+      # - /run/desktop/mnt/host/wslg/.X11-unix:/tmp/.X11-unix
+      # - /run/desktop/mnt/host/wslg:/mnt/wslg
+
+      # Above was changed because of mounting problems screwing up Gazebo display:
+      - /mnt/wslg/.X11-unix:/tmp/.X11-unix
+      - /mnt/wslg:/mnt/wslg
+
     environment:
       ROS_DISTRO: jazzy
       DISPLAY: ":0"

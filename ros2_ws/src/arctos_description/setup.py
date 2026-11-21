@@ -1,5 +1,5 @@
+import os
 from glob import glob
-
 from setuptools import find_packages, setup
 
 package_name = 'arctos_description'
@@ -16,6 +16,7 @@ setup(
         ('share/' + package_name + '/urdf', glob('urdf/*')),
         ('share/' + package_name + '/meshes', glob('meshes/*')),
         ('share/' + package_name + '/rviz', glob('rviz/*.rviz')),
+        (os.path.join('share', package_name, 'config'), glob('config/*.yaml')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
